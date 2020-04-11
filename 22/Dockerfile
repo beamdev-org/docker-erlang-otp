@@ -1,9 +1,11 @@
-FROM buildpack-deps:buster
+FROM leanersoft/generic-aarch64-debian-buildpack-deps:buster
 
 ENV OTP_VERSION="22.3.2" \
     REBAR3_VERSION="3.13.1"
 
 LABEL org.opencontainers.image.version=$OTP_VERSION
+
+RUN [ "cross-build-start" ]
 
 # We'll install the build dependencies for erlang-odbc along with the erlang
 # build process:
@@ -14,6 +16,7 @@ RUN set -xe \
 			libsctp1 \
 			libwxgtk3.0' \
 	&& buildDeps='unixodbc-dev \
+			dpkg-dev \
 			libsctp-dev \
 			libwxgtk3.0-dev' \
 	&& apt-get update \
@@ -66,3 +69,5 @@ RUN set -xe \
 	&& HOME=$PWD ./bootstrap \
 	&& install -v ./rebar3 /usr/local/bin/ \
 	&& rm -rf /usr/src/rebar3-src
+
+RUN [ "cross-build-end" ]
